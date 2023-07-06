@@ -1,4 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-X_test = np.array([[5, 0], [0, 5]])
-print(X_test[:][0])
+X_train = np.array([[1, 1], [2, 2], [3, 3]])
+add = np.array([[5, 6]])
+print(X_train + add.T)
