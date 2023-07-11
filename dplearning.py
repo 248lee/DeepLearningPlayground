@@ -52,7 +52,7 @@ class DeepNeuralNetwork:
             A1, A2 = self.forward_propagation(X)
 
             # Compute loss
-            loss = (-1 / m) * np.sum(y.T * np.log(A2) + (1 - y.T) * np.log(1 - A2))
+            loss = (-1 / m) * np.sum(y * np.log(A2) + (1 - y) * np.log(1 - A2))
             self.losses.append(loss)
 
             # Backward propagation
@@ -68,7 +68,7 @@ class DeepNeuralNetwork:
 
 # Example usage:
 X_train = np.array([[0, 0], [2, 1], [6, 3], [4, 2], [7, 8], [3, 1], [9, 6], [7, 1], [5, 3], [4, 8], [7, 8], [9, 7], [6, 5], [2, 9], [9, 3], [4, 7], [2, 5], [8, 2]])
-y_train = np.array([[1], [1], [1], [0], [0], [1], [0], [1], [1], [0], [0], [0], [0], [0], [0], [0], [1], [1]])
+y_train = np.array([[1], [1], [1], [1], [0], [1], [0], [1], [1], [0], [0], [0], [0], [0], [0], [0], [1], [1]])
 
 model = DeepNeuralNetwork()
 model.fit(X_train, y_train)
@@ -77,6 +77,8 @@ X_test = np.array([[0, 0], [1, 0], [1, 1], [2, 0], [2, 1], [2, 2], [3, 0], [3, 1
 predictions = model.predict(X_test)
 predictions = predictions.flatten()
 
-plt.scatter(X_test[predictions==0.0][:,0], X_test[predictions==0.0][:,1])
-plt.scatter(X_test[predictions==1.0][:,0], X_test[predictions==1.0][:,1])
+plt.scatter(X_test[predictions==0.0][:,0], X_test[predictions==0.0][:,1], color='yellow')
+plt.scatter(X_test[predictions==1.0][:,0], X_test[predictions==1.0][:,1], color='green')
+plt.show()
+plt.plot(range(len(model.losses)), model.losses)
 plt.show()
