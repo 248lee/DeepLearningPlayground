@@ -18,7 +18,7 @@ class DeepNeuralNetwork:
         self.parameters['W1'] = np.random.randn(num_features, 2) * 0.01
         self.parameters['b1'] = np.zeros((1, 2))
         self.parameters['W2'] = np.random.randn(2, 1) * 0.01
-        self.parameters['b2'] = 0
+        self.parameters['b2'] = np.zeros((1, 1))
 
     def forward_propagation(self, X):
         Z1 = np.dot(X, self.parameters['W1']) + self.parameters['b1']
@@ -29,12 +29,12 @@ class DeepNeuralNetwork:
 
     def backward_propagation(self, X, y, A1, A2):
         m = X.shape[0]
-        dZ2 = A2 - y.T
-        dW2 = (1 / m) * np.dot(dZ2, A1.T)
-        db2 = (1 / m) * np.sum(dZ2, axis=1, keepdims=True)
-        dZ1 = np.dot(self.parameters['W2'].T, dZ2) * (A1 * (1 - A1))
-        dW1 = (1 / m) * np.dot(dZ1, X)
-        db1 = (1 / m) * np.sum(dZ1, axis=1, keepdims=True)
+        dZ2 = A2 - y
+        dW2 = (1 / m) * np.dot(A1.T, dZ2)
+        db2 = (1 / m) * np.sum(dZ2, axis=0, keepdims=True)
+        dZ1 = np.dot(dZ2, self.parameters['W2'].T) * (A1 * (1 - A1))
+        dW1 = (1 / m) * np.dot(X.T, dZ1)
+        db1 = (1 / m) * np.sum(dZ1, axis=0, keepdims=True)
         return dW1, db1, dW2, db2
 
     def update_parameters(self, dW1, db1, dW2, db2):
@@ -68,12 +68,15 @@ class DeepNeuralNetwork:
 
 # Example usage:
 X_train = np.array([[0, 0], [2, 1], [6, 3], [4, 2], [7, 8], [3, 1], [9, 6], [7, 1], [5, 3], [4, 8], [7, 8], [9, 7], [6, 5], [2, 9], [9, 3], [4, 7], [2, 5], [8, 2]])
-y_train = np.array([[1], [1], [1], [1], [0], [1], [0], [1], [1], [0], [0], [0], [0], [0], [0], [0], [1], [1]])
+y_train = np.array([[1], [1], [1], [0], [0], [1], [0], [1], [1], [0], [0], [0], [0], [0], [0], [0], [1], [1]])
 
 model = DeepNeuralNetwork()
 model.fit(X_train, y_train)
 
 X_test = np.array([[0, 0], [1, 0], [1, 1], [2, 0], [2, 1], [2, 2], [3, 0], [3, 1], [3, 2], [3, 3], [4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [8, 0], [8, 1], [8, 2], [8, 3], [8, 4], [8, 5], [8, 6], [8, 7], [8, 8], [9, 0], [9, 1], [9, 2], [9, 3], [9, 4], [9, 5], [9, 6], [9, 7], [9, 8], [9, 9], [10, 0], [10, 1], [10, 2], [10, 3], [10, 4], [10, 5], [10, 6], [10, 7], [10, 8], [10, 9], [10, 10], [9, 10], [8, 10], [8, 9], [7, 10], [7, 9], [7, 8], [6, 10], [6, 9], [6, 8], [6, 7], [5, 10], [5, 9], [5, 8], [5, 7], [5, 6], [4, 10], [4, 9], [4, 8], [4, 7], [4, 6], [4, 5], [3, 10], [3, 9], [3, 8], [3, 7], [3, 6], [3, 5], [3, 4], [2, 10], [2, 9], [2, 8], [2, 7], [2, 6], [2, 5], [2, 4], [2, 3], [1, 10], [1, 9], [1, 8], [1, 7], [1, 6], [1, 5], [1, 4], [1, 3], [1, 2], [0, 10], [0, 9], [0, 8], [0, 7], [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1]])
-plt.show()
 predictions = model.predict(X_test)
-print(predictions)
+predictions = predictions.flatten()
+
+plt.scatter(X_test[predictions==0.0][:,0], X_test[predictions==0.0][:,1])
+plt.scatter(X_test[predictions==1.0][:,0], X_test[predictions==1.0][:,1])
+plt.show()
